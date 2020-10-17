@@ -7,4 +7,4 @@ class User {
 }
 
 
-module.exports = Credential;
+module.exports = User;

@@ -8,27 +8,30 @@ const {
   StatusCodes
 } = require('http-status-codes');
 
-const Credantial = require('./model/credantial');
+const Credantial = require('../model/credantial');
+const User = require('../model/user');
 
 const fs = require('fs');
 
 const app = express()
 const port = 3000
 
-var publicKey = fs.readFileSync('./private.key');
 
 app.listen(port, () => console.log(`Example app listening on port port!`))
 
 app.use(jwtExpress({
   secret: process.env.ACCESS_TOKEN_SECRET,
-  credentialsRequired: false,
-  algorithms: ['HS256']
+  credentialsRequired: true,
+  algorithms: ['HS256'],
+}).unless({
+  path: ['/token']
 }));
 
-
 app.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
+  console.log("aa");
 
+  if (err.name === 'UnauthorizedError') {
+    console.log("aa");
     res.status(err.status).send({
       message: err.message
     });
@@ -39,16 +42,23 @@ app.use(function (err, req, res, next) {
 });
 
 
+app.get('/veli', (req, res) => {
+  res.jsonp({
+    "name": "vb"
+  });
+});
 
-app.get('/protected',
+
+
+app.get('/user',
   jwtExpress({
     secret: process.env.ACCESS_TOKEN_SECRET,
     algorithms: ['HS256']
   }),
   function (req, res) {
-    console.log(req.user.admin);
-    if (!req.user.admin) return res.sendStatus(StatusCodes.UNAUTHORIZED);
-    res.sendStatus(StatusCodes.OK);
+    // if (!req.user.admin) return res.sendStatus(401);
+    console.log("AA");
+    return res.status(StatusCodes.OK).jsonp(new User("Veli", Date(), "Istanbul"));
   });
 
 app.get('/token', (req, res) => {
