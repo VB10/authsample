@@ -28,8 +28,6 @@ app.use(jwtExpress({
 }));
 
 app.use(function (err, req, res, next) {
-  console.log("aa");
-
   if (err.name === 'UnauthorizedError') {
     console.log("aa");
     res.status(err.status).send({
@@ -56,8 +54,6 @@ app.get('/user',
     algorithms: ['HS256']
   }),
   function (req, res) {
-    // if (!req.user.admin) return res.sendStatus(401);
-    console.log("AA");
     return res.status(StatusCodes.OK).jsonp(new User("Veli", Date(), "Istanbul"));
   });
 
@@ -70,8 +66,7 @@ app.get('/token', (req, res) => {
     issuer: "VB",
     algorithm: 'HS256',
   }, (err, token) => {
-    console.log(token);
-    console.log(err);
+
     res.status(StatusCodes.OK).jsonp(new Credantial('VB', token));
   })
 });
